@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    .wrapper {
+      max-width: 500px;
+      margin-top: 15%;
+      padding: 10px;
+    }
+    .form {
+      display: flex;
+      max-width: 450px;
+      flex-wrap: wrap;
+      border: 1px solid #212121;
+      border-radius: 6px;
+      padding: 8px 12px;
+    }
+
+    .form-input {
+      margin-right: 12px;
+    }
+    .form-input input {
+      width: 60px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      outline: none;
+      border: 1px solid #212121;
+    }
+    .form-input #name {
+      width: auto;
+    }
+    .form-btn {
+      width: 95%;
+      margin: 16px auto 0;
+    }
+    .red {
+      color: red;
+    }
+
+    .calc {
+      border: 1px solid #212121;
+      margin-top: 15px;
+      padding: 6px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper" id="app">
+    <div class="form">
+      <div class="form-input">
+        <label for="name">飼料名稱：</label>
+        <input v-model="obj.name" type="text" id="name">
+      </div>
+      <div class="form-input">
+        <label for="input1">蛋白質：</label>
+        <input v-model="obj.protein" type="number" id="input1" min="0">
+      </div>
+      <div class="form-input">
+        <label for="input2">脂肪：</label>
+        <input v-model="obj.adipose" type="number" id="input2" min="0">
+      </div>
+      <!-- <div class="form-input">
+        <label for="input3">碳水化合物：</label>
+        <input type="number" id="input3">
+      </div> -->
+      <div class="form-input">
+        <label for="input4">水分：</label>
+        <input v-model="obj.water" type="number" id="input4" min="0">
+      </div>
+      <div class="form-input">
+        <label for="input5">纖維：</label>
+        <input v-model="obj.fiber" type="number" id="input5" min="0">
+      </div>
+      <div class="form-input">
+        <label for="input6">灰質：</label>
+        <input v-model="obj.gray" type="number" id="input6" min="0">
+      </div>
+      <!-- <div class="form-input">
+        <label for="input7">熱量(kcal/100g)：</label>
+        <input type="number" id="input7">
+      </div> -->
+      <p style="width: 100%;">輸入數字就好</p>
+      <button class="form-btn" @click="addData()">新增</button>
+      <button class="form-btn" @click="deleteALl()">刪除全部紀錄</button>
+    </div>
+    <div class="calc" v-for="item, i in oldDataList">
+      <span>第{{i}}筆－{{item.name}}</span>
+      <button class="red" @click="deleteOne(i)">刪除</button>
+      <p>碳水化合物：{{item.carbohydrate}}</p>
+      <p>代謝能：{{item.metabolizableEnergy}}</p>
+      <p>蛋白質比例：{{item.proteinPercent}}％</p>
+      <p>脂肪比例：{{item.adiposePercent}}％</p>
+      <p>碳水化合物比例：{{item.carbohydratePercent}}％</p>
+    </div>
+  </div>
+</body>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      message: 'Hello Vue!',
+      obj: {
+        name: '', // 飼料名稱
+        protein: 0, // 蛋白質
+        adipose: 0, // 脂肪
+        water: 0, // 水分
+        fiber: 0, // 纖維
+        gray: 0, // 灰質
+        metabolizableEnergy: 0, // 代謝能
+        carbohydrate: 0, // 碳水化合物
+        proteinPercent: 0, // 蛋白質比例
+        adiposePercent: 0, // 脂肪比例
+        carbohydratePercent: 0, // 碳水化合物比例
+      },
+      oldDataList: [],
+    },
+    methods: {
+      deleteALl() {
+        window.localStorage.setItem('info', '[]')
+        window.location.reload()
+      },
+      deleteOne(index) {
+        this.oldDataList.splice(index, 1)
+        window.localStorage.setItem('info', JSON.stringify(this.oldDataList))
+        window.location.reload()
+      },
+      addData() {
+        const { name, protein, adipose, water, fiber, gray } = this.obj;
+        if(!protein || !adipose || !water || !fiber || !gray) {
+          alert('請把資料輸入完整！')
+          return
+        }
+        if(!name) {
+          alert('輸入名字以便紀錄')
+          return
+        }
+        this.obj.carbohydrate =
+          100 - protein - adipose - water - fiber - gray;
+        this.obj.metabolizableEnergy = (protein*3.5) + (adipose*8.5) + (this.obj.carbohydrate*3.5);
+        const { metabolizableEnergy, carbohydrate } = this.obj;
+        this.obj.proteinPercent = Math.round(((protein*3.5) / metabolizableEnergy) * 100);
+        this.obj.adiposePercent = Math.round(((adipose*8.5) / metabolizableEnergy) * 100);
+        this.obj.carbohydratePercent = Math.round(((carbohydrate*3.5) / metabolizableEnergy) * 100);
+        this.oldDataList.push(this.obj);
+        window.localStorage.setItem('info', JSON.stringify(this.oldDataList))
+        window.location.reload()
+      }
+    },
+    created() {
+      if(window.localStorage.getItem('info')) {
+        this.oldDataList = JSON.parse(window.localStorage.getItem('info'));
+      }
+    }
+  })
+</script>
+</html>
