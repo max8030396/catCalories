@@ -104,20 +104,26 @@
       <!-- <b-button class="form-btn" variant="outline-success">＋ 新增群組</b-button> -->
       <b-button class="form-btn" variant="danger" @click="deleteALl()">刪除全部紀錄</b-button>
     </b-card>
-    <b-card class="mb-1" v-for="item, i in oldDataList" header-class="d-flex align-items-center justify-content-between">
+    <b-card no-body class="mb-1" v-for="item, i in oldDataList" header-class="d-flex align-items-center justify-content-between">
       <template #header>
-        <span>第{{i + 1}}筆－{{item.name}}</span>
+        <b-button v-b-toggle="`accordion-${i}`" variant="light" class="d-flex align-items-center justify-content-between w-100">
+          <span>第{{i + 1}}筆－{{item.name}}</span>
         <b-button variant="danger" size="sm" class="ml-auto" @click="deleteOne(i)">刪除</b-button>
+        </b-button>
       </template>
-      <b-card-text>
-        <p>成分：</p>
-        <p>蛋白質：{{item.protein}}% / 脂肪：{{item.adipose}}%</p>
-        <p>水分：{{item.water}}% / 纖維：{{item.fiber}}%</p>
-        <p>灰質：{{item.gray}}% / 碳水化合物：{{item.carbohydrate}}%</p>
-        <p>代謝能：{{item.metabolizableEnergy}}/100g</p>
-        <p>蛋白質比例：{{item.proteinPercent}}％ / 脂肪比例：{{item.adiposePercent}}％</p>
-        <p>碳水化合物比例：{{item.carbohydratePercent}}％</p>
-      </b-card-text>
+      <b-collapse :id="`accordion-${i}`" :accordion="`accordion-${i}`" :visible="i === 0" role="tabpanel">
+        <b-card-body>
+          <b-card-text>
+            <p>成分：</p>
+            <p>蛋白質：{{item.protein}}% / 脂肪：{{item.adipose}}%</p>
+            <p>水分：{{item.water}}% / 纖維：{{item.fiber}}%</p>
+            <p>灰質：{{item.gray}}% / 碳水化合物：{{item.carbohydrate}}%</p>
+            <p>代謝能：{{item.metabolizableEnergy}}/100g</p>
+            <p>蛋白質比例：{{item.proteinPercent}}％ / 脂肪比例：{{item.adiposePercent}}％</p>
+            <p>碳水化合物比例：{{item.carbohydratePercent}}％</p>
+          </b-card-text>
+        </b-card-body>
+      </b-collapse>
     </b-card>
 
     <!-- TODO 群組 -->
@@ -130,9 +136,9 @@
           <b-card-text>aaa</b-card-text>
         </b-card-body>
       </b-collapse>
-    </b-card>
+    </b-card> -->
 
-    <b-card no-body class="mb-1">
+    <!-- <b-card no-body class="mb-1">
       <b-card-header header-tag="header" role="tab">
         <b-button block v-b-toggle.accordion-2 variant="light" class="w-100">群組一</b-button>
       </b-card-header>
