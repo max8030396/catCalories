@@ -96,12 +96,14 @@
       <button class="form-btn" @click="deleteALl()">刪除全部紀錄</button>
     </div>
     <div class="calc" v-for="item, i in oldDataList">
-      <span>第{{i}}筆－{{item.name}}</span>
+      <span>第{{i + 1}}筆－{{item.name}}</span>
       <button class="red" @click="deleteOne(i)">刪除</button>
-      <p>碳水化合物：{{item.carbohydrate}}</p>
+      <p>成分：</p>
+      <p>蛋白質：{{item.protein}} / 脂肪：{{item.adipose}}</p>
+      <p>水分：{{item.water}} / 纖維：{{item.fiber}}</p>
+      <p>灰質：{{item.gray}} / 碳水化合物：{{item.carbohydrate}}</p>
       <p>代謝能：{{item.metabolizableEnergy}}</p>
-      <p>蛋白質比例：{{item.proteinPercent}}％</p>
-      <p>脂肪比例：{{item.adiposePercent}}％</p>
+      <p>蛋白質比例：{{item.proteinPercent}}％ / 脂肪比例：{{item.adiposePercent}}％</p>
       <p>碳水化合物比例：{{item.carbohydratePercent}}％</p>
     </div>
   </div>
@@ -147,12 +149,12 @@
           return
         }
         this.obj.carbohydrate =
-          100 - protein - adipose - water - fiber - gray;
-        this.obj.metabolizableEnergy = (protein*3.5) + (adipose*8.5) + (this.obj.carbohydrate*3.5);
+          (100 - protein - adipose - water - fiber - gray).toFixed(2);
+        this.obj.metabolizableEnergy = ((protein*3.5) + (adipose*8.5) + (this.obj.carbohydrate*3.5)).toFixed(2);
         const { metabolizableEnergy, carbohydrate } = this.obj;
-        this.obj.proteinPercent = Math.round(((protein*3.5) / metabolizableEnergy) * 100);
-        this.obj.adiposePercent = Math.round(((adipose*8.5) / metabolizableEnergy) * 100);
-        this.obj.carbohydratePercent = Math.round(((carbohydrate*3.5) / metabolizableEnergy) * 100);
+        this.obj.proteinPercent = (((protein*3.5) / metabolizableEnergy) * 100).toFixed(2);
+        this.obj.adiposePercent = (((adipose*8.5) / metabolizableEnergy) * 100).toFixed(2);
+        this.obj.carbohydratePercent = (((carbohydrate*3.5) / metabolizableEnergy) * 100).toFixed(2);
         this.oldDataList.push(this.obj);
         window.localStorage.setItem('info', JSON.stringify(this.oldDataList))
         window.location.reload()
